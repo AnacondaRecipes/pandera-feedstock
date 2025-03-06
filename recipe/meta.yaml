@@ -216,6 +216,9 @@ outputs:
         - fastapi
 
   - name: pandera-geopandas
+    build:
+      # missing shapely, fiona->geopandas
+      skip: True  # [s390x]
     test:
       requires:
         - pip
