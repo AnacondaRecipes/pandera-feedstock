@@ -138,6 +138,8 @@ outputs:
         - protobuf
 
   - name: pandera-modin-ray
+    build:
+      skip: True  # [s390x]
     test:
       requires:
         - pip
