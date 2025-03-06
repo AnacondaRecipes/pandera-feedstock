@@ -199,6 +199,9 @@ outputs:
         - pandas-stubs
 
   - name: pandera-fastapi
+    build:
+      # missing fastapi
+      skip: True  # [s390x]
     test:
       requires:
         - pip
