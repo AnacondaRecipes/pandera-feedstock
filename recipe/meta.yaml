@@ -30,6 +30,8 @@ outputs:
       host:
         - python
         - pip
+        - wheel
+        - setuptools
       run:
         - python
         - numpy >=1.19.0
@@ -235,10 +237,23 @@ about:
     A simple, zero-configuration Python library to help you build
     confidence in the quality of your dataframe-like containers through
     data validation and property-based testing.
-  doc_url: https://pandera.readthedocs.io/en/latest/
+  doc_url: https://pandera.readthedocs.io/
   dev_url: https://github.com/unionai-oss/pandera
 
 extra:
   feedstock-name: pandera
   recipe-maintainers:
     - cosmicBboy
+  # conda lint is not very smart about multi-output recipes
+  skip-lints:
+    # don't want a script file for single line command
+    - wrong_output_script_key
+    # as other outputs than pandera-base are here just for additional dependencies
+    # they don't require build tools
+    - missing_python_build_tool
+    # python is a dependency of pandera-base only, as other outputs do not produce a real package
+    - missing_python
+    # wheel is only required for the pandera-base, as above
+    - missing_wheel
+    # to not spam PR with not reachable
+    - invalid_url
