@@ -42,11 +42,6 @@ outputs:
         - wrapt
         - packaging >=20.0
         - pydantic
-        - hypothesis >=6.92.7
-        - scipy
-        - pyyaml >=5.1
-        - frictionless <=5  # v5.* introduces breaking changes
-        - pyarrow
         - multimethod <=1.10.0
         - typeguard
 
@@ -104,7 +99,7 @@ outputs:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
         - pyyaml >=5.1
         - black
-        - frictionless
+        - frictionless <=5  # v5.* introduces breaking changes
         - click <7.2.0  # frictionless dependency, not a pandera dependency
 
   - name: pandera-pyspark
