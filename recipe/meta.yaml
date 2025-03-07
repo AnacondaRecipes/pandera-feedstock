@@ -11,6 +11,7 @@ source:
 
 build:
   number: 0
+  skip: True  # [s390x]
 
 outputs:
   - name: pandera-base
@@ -138,8 +139,6 @@ outputs:
         - protobuf
 
   - name: pandera-modin-ray
-    build:
-      skip: True  # [s390x]
     test:
       requires:
         - pip
@@ -201,9 +200,6 @@ outputs:
         - pandas-stubs
 
   - name: pandera-fastapi
-    build:
-      # missing fastapi
-      skip: True  # [s390x]
     test:
       requires:
         - pip
@@ -218,9 +214,6 @@ outputs:
         - fastapi
 
   - name: pandera-geopandas
-    build:
-      # missing shapely, fiona->geopandas
-      skip: True  # [s390x]
     test:
       requires:
         - pip
