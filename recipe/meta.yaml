@@ -98,9 +98,8 @@ outputs:
       run:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
         - pyyaml >=5.1
-        - black >=20
+        - black
         - frictionless <=5  # v5.* introduces breaking changes
-        - click <7.2.0  # frictionless dependency, not a pandera dependency
 
   - name: pandera-pyspark
     test:
