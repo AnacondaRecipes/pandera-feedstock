@@ -1,5 +1,5 @@
 {% set name = "pandera" %}
-{% set version = "0.13.4" %}
+{% set version = "0.20.4" %}
 
 package:
   name: pandera-suite
@@ -7,17 +7,17 @@ package:
 
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: 6ef2b7ee00d3439ac815d4347984421a08502da1020cec60c06dd0135e8aee2f
+  sha256: ccf6178293ef9d4393dc4776e47477e3d2dd51c800ecdfedec67fff50f4ad3c2
 
 build:
   number: 0
+  skip: True  # [s390x]
 
 outputs:
   - name: pandera-base
     build:
-      noarch: python
       script:
-        - python -m pip install . --no-deps -vv
+        - python -m pip install . --no-deps --no-build-isolation -vv
 
     test:
       requires:
@@ -29,21 +29,23 @@ outputs:
 
     requirements:
       host:
-        - python >=3.7
+        - python
         - pip
+        - wheel
+        - setuptools
       run:
-        - python >=3.7
-        - numpy >=1.9.0
-        - pandas >=1.0
-        - typing_extensions
+        - python
+        - numpy >=1.19.0
+        - pandas >=1.2.0
+        - typing_extensions >=3.7.4.3  # [py<38]  
         - typing_inspect >=0.6.0
         - wrapt
         - packaging >=20.0
         - pydantic
+        - multimethod <=1.10.0
+        - typeguard
 
   - name: pandera
-    build:
-      noarch: python
     test:
       requires:
         - pip
@@ -56,8 +58,6 @@ outputs:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
 
   - name: pandera-strategies
-    build:
-      noarch: python
     test:
       requires:
         - pip
@@ -69,17 +69,15 @@ outputs:
     requirements:
       run:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
-        - hypothesis >=5.41.1
+        - hypothesis >=6.92.7
 
   - name: pandera-hypotheses
-    build:
-      noarch: python
     test:
       requires:
         - pip
       imports:
         - pandera
-        - pandera.hypotheses
+        - pandera.api.hypotheses
       commands:
         - pip check
     requirements:
@@ -88,8 +86,6 @@ outputs:
         - scipy
 
   - name: pandera-io
-    build:
-      noarch: python
     test:
       requires:
         - pip
@@ -103,35 +99,30 @@ outputs:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
         - pyyaml >=5.1
         - black
-        - frictionless
-        - click <7.2.0  # frictionless dependency, not a pandera dependency
+        - frictionless <5  # v5.* introduces breaking changes
 
   - name: pandera-pyspark
-    build:
-      noarch: python
     test:
       requires:
         - pip
       imports:
         - pandera
-        - pandera.pyspark_accessor
+        - pandera.accessors.pyspark_accessor
         - pandera.typing.pyspark
       commands:
         - pip check
     requirements:
       run:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
-        - pyspark
+        - pyspark >=3.2.0
 
   - name: pandera-modin
-    build:
-      noarch: python
     test:
       requires:
         - pip
       imports:
         - pandera
-        - pandera.modin_accessor
+        - pandera.accessors.modin_accessor
         - pandera.typing.modin
       commands:
         - pip check
@@ -139,16 +130,15 @@ outputs:
       run:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
         - modin
+        - protobuf
 
   - name: pandera-modin-ray
-    build:
-      noarch: python
     test:
       requires:
         - pip
       imports:
         - pandera
-        - pandera.modin_accessor
+        - pandera.accessors.modin_accessor
         - pandera.typing.modin
       commands:
         - pip check
@@ -158,14 +148,12 @@ outputs:
         - modin-ray
 
   - name: pandera-modin-dask
-    build:
-      noarch: python
     test:
       requires:
         - pip
       imports:
         - pandera
-        - pandera.modin_accessor
+        - pandera.accessors.modin_accessor
         - pandera.typing.modin
       commands:
         - pip check
@@ -175,14 +163,12 @@ outputs:
         - modin-dask
 
   - name: pandera-dask
-    build:
-      noarch: python
     test:
       requires:
         - pip
       imports:
         - pandera
-        - pandera.dask_accessor
+        - pandera.accessors.dask_accessor
         - pandera.typing.dask
       commands:
         - pip check
@@ -193,8 +179,6 @@ outputs:
         - distributed
 
   - name: pandera-mypy
-    build:
-      noarch: python
     test:
       requires:
         - pip
@@ -210,8 +194,6 @@ outputs:
         - pandas-stubs
 
   - name: pandera-fastapi
-    build:
-      noarch: python
     test:
       requires:
         - pip
@@ -226,8 +208,6 @@ outputs:
         - fastapi
 
   - name: pandera-geopandas
-    build:
-      noarch: python
     test:
       requires:
         - pip
@@ -252,10 +232,23 @@ about:
     A simple, zero-configuration Python library to help you build
     confidence in the quality of your dataframe-like containers through
     data validation and property-based testing.
-  doc_url: https://pandera.readthedocs.io/en/latest/
+  doc_url: https://pandera.readthedocs.io/
   dev_url: https://github.com/unionai-oss/pandera
 
 extra:
   feedstock-name: pandera
   recipe-maintainers:
     - cosmicBboy
+  # conda lint is not very smart about multi-output recipes
+  skip-lints:
+    # don't want a script file for single line command
+    - wrong_output_script_key
+    # as other outputs than pandera-base are here just for additional dependencies
+    # they don't require build tools
+    - missing_python_build_tool
+    # python is a dependency of pandera-base only, as other outputs do not produce a real package
+    - missing_python
+    # wheel is only required for the pandera-base, as above
+    - missing_wheel
+    # to not spam PR with not reachable
+    - invalid_url
