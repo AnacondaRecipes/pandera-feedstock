@@ -1,0 +1,18 @@
+anaconda_config_version: 1
+upstream_sources:
+  - pypi:
+      identifier: pandera
+    packages:
+      - pandera
+      - pandera-base
+      - pandera-dask
+      - pandera-fastapi
+      - pandera-geopandas
+      - pandera-hypotheses
+      - pandera-io
+      - pandera-modin
+      - pandera-modin-dask
+      - pandera-modin-ray
+      - pandera-mypy
+      - pandera-pyspark
+      - pandera-strategies
