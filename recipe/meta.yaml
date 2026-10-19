@@ -98,7 +98,7 @@ outputs:
     requirements:
       run:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
-        - hypothesis >=6.92.7
+        - hypothesis
 
   - name: pandera-hypotheses
     test:
@@ -126,9 +126,7 @@ outputs:
     requirements:
       run:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
-        - pyyaml >=5.1
-        - black
-        - frictionless <5  # v5.* introduces breaking changes
+        - pyyaml
 
   - name: pandera-pyspark
     test:
@@ -143,7 +141,10 @@ outputs:
     requirements:
       run:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
-        - pyspark >=3.2.0
+        - pyspark
+        - grpcio
+        - grpcio-status
+        - googleapis-common-protos
 
   - name: pandera-modin
     test:
@@ -159,7 +160,14 @@ outputs:
       run:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
         - modin
-        - protobuf
+        - ray
+        - distributed
+        #- dask[dataframe]
+        - dask
+        - pandas
+        - pyarrow
+        # dask[array]
+        - numpy
 
   - name: pandera-modin-ray
     test:
@@ -206,6 +214,12 @@ outputs:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
         - dask
         - distributed
+        #- dask[dataframe]
+        - dask
+        - pandas
+        - pyarrow
+        # dask[array]
+        - numpy
 
   - name: pandera-mypy
     test:
@@ -221,6 +235,7 @@ outputs:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
         - mypy
         - pandas-stubs
+        - scipy-stubs  #[py>=310]
 
   - name: pandera-fastapi
     test:
