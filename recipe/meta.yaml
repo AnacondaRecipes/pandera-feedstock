@@ -40,6 +40,39 @@ outputs:
         - typeguard
         - typing_extensions
         - typing_inspect >=0.6.0
+      run_constrained:
+        # cli
+        - typer >=0.12.3
+        - pyyaml >=5.1
+        # pandas
+        - numpy >=1.24.4
+        - pandas >=2.1.1
+        # strategies
+        - hypothesis >=6.92.7
+        # io
+        - pyyaml >=5.1
+        # frictionless
+        - frictionless <=4.40.8
+        # mypy
+        - scipy-stubs  # [py>=3.10]
+        # pyspark
+        # pyspark[connect] >= 3.2.0
+        - pyspark >=3.2.0
+        - grpcio >=1.56.0
+        - grpcio-status >=1.56.0
+        - googleapis-common-protos >=1.56.4
+        # ibis
+        - ibis-framework >=9.0.0
+        # polars
+        - polars >=1.20.0
+        # xarray
+        - xarray >=2024.10.0
+        - numpy >=1.24.4
+        # narwhals
+        - narwhals >=1.26.0
+        # pyarrow
+        - pyarrow >=13
+        - narwhals >=1.26.0
 
   - name: pandera
     test:
