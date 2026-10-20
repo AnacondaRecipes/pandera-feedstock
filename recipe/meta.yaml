@@ -142,9 +142,12 @@ outputs:
       run:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
         - pyspark
+        - pandas
+        - pyarrow
         - grpcio
         - grpcio-status
         - googleapis-common-protos
+        - numpy
 
   - name: pandera-modin
     test:
@@ -160,14 +163,9 @@ outputs:
       run:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
         - modin
-        - ray
-        - distributed
-        #- dask[dataframe]
-        - dask
-        - pandas
-        - pyarrow
-        # dask[array]
-        - numpy
+        # this one is a superset of both pandera-modin-ray and pandera-modin-dask packages
+        - {{ pin_subpackage('pandera-modin-ray', max_pin="x.x.x") }}
+        - {{ pin_subpackage('pandera-modin-dask', max_pin="x.x.x") }}
 
   - name: pandera-modin-ray
     test:
@@ -214,7 +212,7 @@ outputs:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
         - dask
         - distributed
-        #- dask[dataframe]
+        # dask[dataframe]
         - dask
         - pandas
         - pyarrow
