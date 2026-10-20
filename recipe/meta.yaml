@@ -219,21 +219,22 @@ outputs:
         # dask[array]
         - numpy
 
-  - name: pandera-mypy
-    test:
-      requires:
-        - pip
-      imports:
-        - pandera
-        - pandera.mypy
-      commands:
-        - pip check
-    requirements:
-      run:
-        - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
-        - mypy
-        - pandas-stubs
-        - scipy-stubs  # [py>=310]
+# skip pandera-mypy as we're missing scipy-stubs
+#  - name: pandera-mypy
+#    test:
+#      requires:
+#        - pip
+#      imports:
+#        - pandera
+#        - pandera.mypy
+#      commands:
+#        - pip check
+#    requirements:
+#      run:
+#        - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
+#        - mypy
+#        - pandas-stubs
+#        - scipy-stubs  # [py>=310]
 
   - name: pandera-fastapi
     test:
