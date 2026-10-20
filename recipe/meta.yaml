@@ -48,8 +48,6 @@ outputs:
         #- pyyaml >=5.1
         # frictionless
         - frictionless <=4.40.8
-        # mypy
-        - scipy-stubs  # [py>=3.10]
         # pyspark
         # pyspark[connect] >= 3.2.0
         - pyspark >=3.2.0
