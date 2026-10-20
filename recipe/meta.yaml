@@ -233,7 +233,7 @@ outputs:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
         - mypy
         - pandas-stubs
-        - scipy-stubs  #[py>=310]
+        - scipy-stubs  # [py>=310]
 
   - name: pandera-fastapi
     test:
