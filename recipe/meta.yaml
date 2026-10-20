@@ -33,6 +33,8 @@ outputs:
         - pip
         - wheel
         - setuptools
+        # avoids missing version metadata when used by depending packages (pandapower)
+        - setuptools-scm
       run:
         - python
         - packaging >=20.0
