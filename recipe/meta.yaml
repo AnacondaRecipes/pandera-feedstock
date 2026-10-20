@@ -275,7 +275,7 @@ about:
     A simple, zero-configuration Python library to help you build
     confidence in the quality of your dataframe-like containers through
     data validation and property-based testing.
-  doc_url: https://pandera.readthedocs.io/
+  doc_url: https://pandera.readthedocs.io
   dev_url: https://github.com/unionai-oss/pandera
 
 extra:
