@@ -45,7 +45,7 @@ outputs:
         # strategies
         - hypothesis >=6.92.7
         # io
-        - pyyaml >=5.1
+        #- pyyaml >=5.1
         # frictionless
         - frictionless <=4.40.8
         # mypy
@@ -62,12 +62,12 @@ outputs:
         - polars >=1.20.0
         # xarray
         - xarray >=2024.10.0
-        - numpy >=1.24.4
+        #- numpy >=1.24.4
         # narwhals
         - narwhals >=1.26.0
         # pyarrow
         - pyarrow >=13
-        - narwhals >=1.26.0
+        #- narwhals >=1.26.0
 
     test:
       requires:
