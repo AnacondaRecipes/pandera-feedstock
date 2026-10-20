@@ -18,6 +18,8 @@ outputs:
     build:
       script:
         - python -m pip install . --no-deps --no-build-isolation -vv
+      entry_points:
+        - pandera = pandera.cli:main
 
     test:
       requires:
