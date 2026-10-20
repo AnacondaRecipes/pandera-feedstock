@@ -34,8 +34,7 @@ outputs:
         - python
         - pip
         - wheel
-        - setuptools
-        # avoids missing version metadata when used by depending packages (pandapower)
+        - setuptools >=61.0
         - setuptools-scm
       run:
         - python
