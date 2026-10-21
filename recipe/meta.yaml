@@ -91,7 +91,7 @@ outputs:
     requirements:
       run:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
-        - hypothesis
+        - hypothesis >=6.92.7
     test:
       requires:
         - pip
@@ -119,7 +119,7 @@ outputs:
     requirements:
       run:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
-        - pyyaml
+        - pyyaml >=5.1
     test:
       requires:
         - pip
@@ -133,13 +133,13 @@ outputs:
     requirements:
       run:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
-        - pyspark
-        - pandas
-        - pyarrow
-        - grpcio
-        - grpcio-status
-        - googleapis-common-protos
-        - numpy
+        - pyspark >=3.2.0
+        - pandas >=2.1.1
+        - pyarrow >=13
+        - grpcio >=1.56.0
+        - grpcio-status >=1.56.0
+        - googleapis-common-protos >=1.56.4
+        - numpy >=1.24.4
     test:
       requires:
         - pip
@@ -206,10 +206,10 @@ outputs:
         - distributed
         # dask[dataframe]
         - dask
-        - pandas
-        - pyarrow
+        - pandas >=2.1.1
+        - pyarrow >=13
         # dask[array]
-        - numpy
+        - numpy >=1.24.4
     test:
       requires:
         - pip
