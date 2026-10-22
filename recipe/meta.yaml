@@ -1,51 +1,72 @@
 {% set name = "pandera" %}
-{% set version = "0.20.4" %}
+{% set version = "0.34.1" %}
 
 package:
   name: pandera-suite
   version: {{ version }}
 
 source:
-  url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
-  sha256: ccf6178293ef9d4393dc4776e47477e3d2dd51c800ecdfedec67fff50f4ad3c2
+  url: https://pypi.org/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz
+  sha256: 8907a976403757c5e05a73022d4c447c74844d01c6053667b9a2ca63f26c2fa6
 
 build:
   number: 0
-  skip: True  # [s390x]
+  skip: true  # [py<310]
 
 outputs:
   - name: pandera-base
     build:
       script:
         - python -m pip install . --no-deps --no-build-isolation -vv
-
-    test:
-      requires:
-        - pip
-      imports:
-        - pandera
-      commands:
-        - pip check
+      entry_points:
+        - pandera = pandera.cli:main
 
     requirements:
       host:
         - python
         - pip
         - wheel
-        - setuptools
+        - setuptools >=61.0
+        - setuptools-scm
       run:
         - python
-        - numpy >=1.19.0
-        - pandas >=1.2.0
-        - typing_extensions >=3.7.4.3  # [py<38]  
-        - typing_inspect >=0.6.0
-        - wrapt
         - packaging >=20.0
         - pydantic
-        - multimethod <=1.10.0
         - typeguard
+        - typing_extensions
+        - typing_inspect >=0.6.0
+      run_constrained:
+        # cli
+        - typer >=0.12.3
+        - pyyaml >=5.1
+        # pandas
+        - numpy >=1.24.4
+        - pandas >=2.1.1
+        # strategies
+        - hypothesis >=6.92.7
+        # io
+        #- pyyaml >=5.1
+        # frictionless
+        - frictionless <=4.40.8
+        # pyspark
+        # pyspark[connect] >= 3.2.0
+        - pyspark >=3.2.0
+        - grpcio >=1.56.0
+        - grpcio-status >=1.56.0
+        - googleapis-common-protos >=1.56.4
+        # ibis
+        - ibis-framework >=9.0.0
+        # polars
+        - polars >=1.20.0
+        # xarray
+        - xarray >=2024.10.0
+        #- numpy >=1.24.4
+        # narwhals
+        - narwhals >=1.26.0
+        # pyarrow
+        - pyarrow >=13
+        #- narwhals >=1.26.0
 
-  - name: pandera
     test:
       requires:
         - pip
@@ -53,11 +74,24 @@ outputs:
         - pandera
       commands:
         - pip check
+
+  - name: pandera
     requirements:
       run:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
+    test:
+      requires:
+        - pip
+      imports:
+        - pandera
+      commands:
+        - pip check
 
   - name: pandera-strategies
+    requirements:
+      run:
+        - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
+        - hypothesis >=6.92.7
     test:
       requires:
         - pip
@@ -66,12 +100,12 @@ outputs:
         - pandera.strategies
       commands:
         - pip check
+
+  - name: pandera-hypotheses
     requirements:
       run:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
-        - hypothesis >=6.92.7
-
-  - name: pandera-hypotheses
+        - scipy
     test:
       requires:
         - pip
@@ -80,12 +114,12 @@ outputs:
         - pandera.api.hypotheses
       commands:
         - pip check
+
+  - name: pandera-io
     requirements:
       run:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
-        - scipy
-
-  - name: pandera-io
+        - pyyaml >=5.1
     test:
       requires:
         - pip
@@ -94,14 +128,18 @@ outputs:
         - pandera.io
       commands:
         - pip check
+
+  - name: pandera-pyspark
     requirements:
       run:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
-        - pyyaml >=5.1
-        - black
-        - frictionless <5  # v5.* introduces breaking changes
-
-  - name: pandera-pyspark
+        - pyspark >=3.2.0
+        - pandas >=2.1.1
+        - pyarrow >=13
+        - grpcio >=1.56.0
+        - grpcio-status >=1.56.0
+        - googleapis-common-protos >=1.56.4
+        - numpy >=1.24.4
     test:
       requires:
         - pip
@@ -111,28 +149,15 @@ outputs:
         - pandera.typing.pyspark
       commands:
         - pip check
-    requirements:
-      run:
-        - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
-        - pyspark >=3.2.0
 
   - name: pandera-modin
-    test:
-      requires:
-        - pip
-      imports:
-        - pandera
-        - pandera.accessors.modin_accessor
-        - pandera.typing.modin
-      commands:
-        - pip check
     requirements:
       run:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
         - modin
-        - protobuf
-
-  - name: pandera-modin-ray
+        # this one is a superset of both pandera-modin-ray and pandera-modin-dask packages
+        - {{ pin_subpackage('pandera-modin-ray', max_pin="x.x.x") }}
+        - {{ pin_subpackage('pandera-modin-dask', max_pin="x.x.x") }}
     test:
       requires:
         - pip
@@ -142,12 +167,12 @@ outputs:
         - pandera.typing.modin
       commands:
         - pip check
+
+  - name: pandera-modin-ray
     requirements:
       run:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
         - modin-ray
-
-  - name: pandera-modin-dask
     test:
       requires:
         - pip
@@ -157,12 +182,34 @@ outputs:
         - pandera.typing.modin
       commands:
         - pip check
+
+  - name: pandera-modin-dask
     requirements:
       run:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
         - modin-dask
+    test:
+      requires:
+        - pip
+      imports:
+        - pandera
+        - pandera.accessors.modin_accessor
+        - pandera.typing.modin
+      commands:
+        - pip check
 
   - name: pandera-dask
+    requirements:
+      run:
+        - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
+        - dask
+        - distributed
+        # dask[dataframe]
+        - dask
+        - pandas >=2.1.1
+        - pyarrow >=13
+        # dask[array]
+        - numpy >=1.24.4
     test:
       requires:
         - pip
@@ -172,28 +219,29 @@ outputs:
         - pandera.typing.dask
       commands:
         - pip check
-    requirements:
-      run:
-        - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
-        - dask
-        - distributed
 
-  - name: pandera-mypy
-    test:
-      requires:
-        - pip
-      imports:
-        - pandera
-        - pandera.mypy
-      commands:
-        - pip check
-    requirements:
-      run:
-        - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
-        - mypy
-        - pandas-stubs
+# skip pandera-mypy as we're missing scipy-stubs
+#  - name: pandera-mypy
+#    requirements:
+#      run:
+#        - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
+#        - mypy
+#        - pandas-stubs
+#        - scipy-stubs  # [py>=310]
+#    test:
+#      requires:
+#        - pip
+#      imports:
+#        - pandera
+#        - pandera.mypy
+#      commands:
+#        - pip check
 
   - name: pandera-fastapi
+    requirements:
+      run:
+        - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
+        - fastapi
     test:
       requires:
         - pip
@@ -202,12 +250,13 @@ outputs:
         - pandera.typing.fastapi
       commands:
         - pip check
+
+  - name: pandera-geopandas
     requirements:
       run:
         - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
-        - fastapi
-
-  - name: pandera-geopandas
+        - geopandas
+        - shapely
     test:
       requires:
         - pip
@@ -216,11 +265,6 @@ outputs:
         - pandera.typing.geopandas
       commands:
         - pip check
-    requirements:
-      run:
-        - {{ pin_subpackage('pandera-base', max_pin="x.x.x") }}
-        - geopandas
-        - shapely
 
 about:
   home: https://github.com/pandera-dev/pandera
@@ -232,7 +276,7 @@ about:
     A simple, zero-configuration Python library to help you build
     confidence in the quality of your dataframe-like containers through
     data validation and property-based testing.
-  doc_url: https://pandera.readthedocs.io/
+  doc_url: https://pandera.readthedocs.io
   dev_url: https://github.com/unionai-oss/pandera
 
 extra:
